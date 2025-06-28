@@ -115,18 +115,18 @@ export default function ProductView({ product }: { product: Product | null }) {
       <div className="w-full">
         {/* ใช้ product.description สำหรับคำอธิบายแบบยาว */}
         {product.description && (
-          <div className="py-8 border-t">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Product Description</h2>
-            <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: product.description }} />
+          <div className="py-8 border-t border-gray-200">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4 uppercase">Product Description</h2>
+            <div className="leading-loose prose max-w-none" dangerouslySetInnerHTML={{ __html: product.description }} />
           </div>
         )}
 
         {/* แสดงผล Specifications จาก ACF */}
         {product.acf?.product_specifications && (
-          <div className="py-8 border-t">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Specifications</h2>
+          <div className="item-start text-left py-8 border-t border-gray-200">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4 uppercase">Specifications</h2>
             <div
-              className="prose prose-sm max-w-none"
+              className="grid grid-cols-1 leading-loose prose prose-sm max-w-none"
               dangerouslySetInnerHTML={{ __html: product.acf.product_specifications }}
             />
           </div>
