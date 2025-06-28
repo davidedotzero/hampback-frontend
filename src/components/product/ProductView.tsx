@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Product } from '@/types/product';
+import ProductVideo from './video/ProductVideo';
 
 // --- สร้าง Sub-Component สำหรับจัดการแกลเลอรีรูปภาพ ---
 function ProductGallery({ images }: { images: { src: string; alt: string; id: number }[] }) {
@@ -37,7 +38,7 @@ function ProductGallery({ images }: { images: { src: string; alt: string; id: nu
           priority // โหลดรูปนี้ก่อนเพื่อประสิทธิภาพ
         />
       </div>
-      
+
       {/* ส่วนแสดงรูปภาพ Thumbnail ด้านล่าง (จะแสดงก็ต่อเมื่อมีรูปมากกว่า 1 รูป) */}
       {images.length > 1 && (
         <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
@@ -47,12 +48,12 @@ function ProductGallery({ images }: { images: { src: string; alt: string; id: nu
               onClick={() => setSelectedImage(image)}
               className={`aspect-square rounded-md overflow-hidden border-2 transition-all ${selectedImage.id === image.id ? 'border-purple-600 ring-2 ring-purple-300' : 'border-transparent'} hover:border-purple-400`}
             >
-              <Image 
-                src={image.src} 
-                alt={image.alt || `Product thumbnail`} 
-                width={150} 
-                height={150} 
-                className="w-full h-full object-cover" 
+              <Image
+                src={image.src}
+                alt={image.alt || `Product thumbnail`}
+                width={150}
+                height={150}
+                className="w-full h-full object-cover"
               />
             </button>
           ))}
@@ -76,31 +77,39 @@ export default function ProductView({ product }: { product: Product | null }) {
     );
   }
 
+  const videoGroup = product.acf?.product_videos;
+  const videoIframes = videoGroup ?
+    Object.values(videoGroup).filter((iframe): iframe is string => typeof iframe === 'string' && iframe.length > 0)
+    : [];
+
   return (
     <div className="space-y-12 lg:space-y-16">
       {/* ส่วนบน: รูปภาพและข้อมูลเบื้องต้น */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16 items-start">
-      <ProductGallery images={product.images} />
+        <ProductGallery images={product.images} />
         <div className="sticky top-28">
           <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-3">{product.name}</h1>
-          
+
           {/* ใช้ price_html จาก WooCommerce เพื่อแสดงราคาที่จัดรูปแบบแล้ว (เช่น ราคาลด) */}
-          <div 
-            className="text-3xl font-bold text-purple-700 mb-6" 
-            dangerouslySetInnerHTML={{ __html: product.price_html || `฿${product.price}` }} 
+          <div
+            className="text-3xl font-bold text-purple-700 mb-6"
+            dangerouslySetInnerHTML={{ __html: product.price_html || `฿${product.price}` }}
           />
-          
+
           {/* ใช้ short_description สำหรับคำอธิบายย่อ */}
-          <div 
-            className="prose mt-4 text-gray-700" 
-            dangerouslySetInnerHTML={{ __html: product.short_description }} 
+          <div
+            className="prose mt-4 text-gray-700"
+            dangerouslySetInnerHTML={{ __html: product.short_description }}
           />
-          
+
           <div className="mt-8">
             <button className="w-full bg-gray-900 text-white font-bold py-4 px-6 rounded-lg hover:bg-gray-700 transition-colors text-lg">Get a Dealer</button>
           </div>
         </div>
       </div>
+
+      {/* ส่วน Video (ถ้ามี) */}
+      <ProductVideo iframeHtmls={videoIframes} />
 
       {/* ส่วนล่าง: รายละเอียดเพิ่มเติมทั้งหมด */}
       <div className="w-full">
@@ -116,23 +125,10 @@ export default function ProductView({ product }: { product: Product | null }) {
         {product.acf?.product_specifications && (
           <div className="py-8 border-t">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Specifications</h2>
-            <div 
-              className="prose prose-sm max-w-none" 
-              dangerouslySetInnerHTML={{ __html: product.acf.product_specifications }} 
+            <div
+              className="prose prose-sm max-w-none"
+              dangerouslySetInnerHTML={{ __html: product.acf.product_specifications }}
             />
-          </div>
-        )}
-
-        {/* แสดงผล Video จาก ACF */}
-        {product.acf?.product_video && (
-          <div className="py-8 border-t">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">Video</h2>
-            <div className="flex justify-center">
-              <div 
-                className="aspect-w-9 aspect-h-16 w-full max-w-xs overflow-hidden rounded-xl shadow-lg [&_iframe]:w-full [&_iframe]:h-full"
-                dangerouslySetInnerHTML={{ __html: product.acf.product_video }}
-              />
-            </div>
           </div>
         )}
       </div>

@@ -11,6 +11,10 @@ export interface Product {
   categories: { id: number; name: string; slug: string; }[];
   acf?: {
     product_specifications?: string;
-    product_video?: string;
+    product_videos?: {
+      product_video_1?: string; 
+      product_video_2?: string;
+      product_video_3?: string;
+    }
   };
 }
