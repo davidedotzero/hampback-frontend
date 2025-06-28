@@ -23,7 +23,7 @@ export default function Navbar() {
         <div className="flex justify-between items-center py-4">
           <div className="w-1/3 lg:w-1/5">
             <Link href="/">
-              <Image src="/next.svg" alt="Hampback Logo" width={150} height={50} priority />
+              <Image src="/Hampback-logo.png" alt="Hampback Logo" width={150} height={50} priority />
             </Link>
           </div>
 

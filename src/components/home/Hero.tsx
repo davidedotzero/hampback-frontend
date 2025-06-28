@@ -13,7 +13,7 @@ export default function Hero({ imageUrl }: HeroProps) {
   }
 
   return (
-    <section className="relative w-full h-[60vh] min-h-[400px] max-h-[700px] text-white">
+    <section className="relative w-full h-[100vh] min-h-[400px] max-h-[1080px] text-white">
       {/* ใช้ Next.js Image component เป็นพื้นหลัง */}
       <Image
         src={imageUrl}
@@ -28,7 +28,7 @@ export default function Hero({ imageUrl }: HeroProps) {
       <div className="absolute inset-0 bg-opacity-40" />
       
       {/* Container สำหรับข้อความ จะต้องเป็น relative เพื่อให้ลอยอยู่เหนือ Overlay */}
-      <div className="relative h-full flex flex-col justify-center items-center text-center px-4">
+      {/* <div className="relative h-full flex flex-col justify-center items-center text-center px-4">
         <h1 className="text-4xl md:text-6xl font-extrabold leading-tight tracking-tight drop-shadow-lg">
           Quality You Can Hear
         </h1>
@@ -38,7 +38,7 @@ export default function Hero({ imageUrl }: HeroProps) {
         <button className="mt-8 bg-purple-600 hover:bg-purple-700 font-bold py-3 px-8 rounded-lg transition-colors shadow-lg">
           Shop Now
         </button>
-      </div>
+      </div> */}
     </section>
   );
 }

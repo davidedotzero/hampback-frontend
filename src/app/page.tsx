@@ -1,6 +1,6 @@
 // src/app/page.tsx
 
-import Hero from '@/components/้home/Hero';
+import Hero from '@/components/home/Hero';
 // ... import component อื่นๆ
 
 const wpApiBaseUrl = process.env.NEXT_PUBLIC_WORDPRESS_API_URL;
