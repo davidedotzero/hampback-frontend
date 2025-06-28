@@ -14,12 +14,12 @@ export default function Footer() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             
             {/* ทำให้ Logo และข้อความอยู่ตรงกลางในจอมือถือ */}
-            <div className="flex flex-col items-center md:items-start text-center md:text-left">
+            <div className="flex flex-col gap-8 items-center md:items-start text-center md:text-left">
               <Image
-                src="/hampback-logo-dark.png"
-                alt="Hampback Logo Dark"
-                width={200}
-                height={70}
+                src="/hampback-logo.svg"
+                alt="Hampback Logo"
+                width={400}
+                height={140}
                 className="object-contain"
               />
             </div>
