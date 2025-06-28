@@ -1,56 +1,55 @@
-import { Product } from '@/types/product';
+// src/app/products/page.tsx
 
+import ProductPageClient from '@/components/layout/ProductPageClient';
+import { Product } from '@/types/product'; 
+import { Category } from '@/types/category'; 
+
+const wpApiBaseUrl = process.env.NEXT_PUBLIC_WORDPRESS_API_URL;
+
+// --- API endpoint ของ WooCommerce ---
+const productsApiUrl = `${wpApiBaseUrl}/wc/v3/products?per_page=100`;
+const categoriesApiUrl = `${wpApiBaseUrl}/wc/v3/products/categories?_fields=id,name,slug`;
+
+// --- Authentication Header (สำคัญมาก) ---
+const consumerKey = process.env.WOOCOMMERCE_CONSUMER_KEY || '';
+const consumerSecret = process.env.WOOCOMMERCE_CONSUMER_SECRET || '';
+const auth = Buffer.from(`${consumerKey}:${consumerSecret}`).toString('base64');
+const headers = { 'Authorization': `Basic ${auth}` };
 
 async function getAllProducts(): Promise<Product[]> {
-  const wpApiBaseUrl = process.env.NEXT_PUBLIC_WORDPRESS_API_URL;
-  const productsApiUrl = `${wpApiBaseUrl}/wc/v3/products?per_page=100`;
-
-  const consumerKey = process.env.WOOCOMMERCE_CONSUMER_KEY || '';
-  const consumerSecret = process.env.WOOCOMMERCE_CONSUMER_SECRET || '';
-
-  // Log เพื่อตรวจสอบว่าอ่านค่า key มาจาก .env หรือไม่
-  console.log("Using Consumer Key:", consumerKey ? `ck_...${consumerKey.slice(-5)}` : "Key not found!");
-  
-  const auth = Buffer.from(`${consumerKey}:${consumerSecret}`).toString('base64');
-  
   try {
-    const response = await fetch(productsApiUrl, {
-      headers: { 'Authorization': `Basic ${auth}` },
-      cache: 'no-store', // เพิ่ม cache: 'no-store' ชั่วคราวเพื่อการดีบัก
-    });
-
-    // ถ้าไม่สำเร็จ ให้ Log ข้อความจาก Server ออกมาดู
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error("Failed to fetch products. Status:", response.status);
-      console.error("Error details from WooCommerce:", errorData);
-      throw new Error('Failed to fetch products');
-    }
-    
-    console.log("Successfully fetched products!");
+    const response = await fetch(productsApiUrl, { headers, next: { revalidate: 60 } });
+    if (!response.ok) throw new Error('Failed to fetch products');
     return await response.json();
   } catch (error) {
-    console.error("Error during product fetch operation:", error);
+    console.error("Error fetching all products:", error);
+    return [];
+  }
+}
+
+async function getAllCategories(): Promise<Category[]> {
+  try {
+    const response = await fetch(categoriesApiUrl, { headers, next: { revalidate: 3600 } });
+    if (!response.ok) throw new Error('Failed to fetch categories');
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching categories:", error);
     return [];
   }
 }
 
 export default async function ProductsPage() {
-  const initialProducts = await getAllProducts();
+  const [initialProducts, categories] = await Promise.all([
+    getAllProducts(),
+    getAllCategories()
+  ]);
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
-      {/* Render your products here */}
-      <h1 className="text-2xl font-bold mb-6">Products</h1>
-      <ul>
-        {initialProducts.map(product => (
-          <li key={product.id} className="mb-4">
-            <h2 className="text-xl">{product.name}</h2>
-            <p>{product.description}</p>
-          </li>
-        ))}
-      </ul>
+      <ProductPageClient 
+        initialProducts={initialProducts} 
+        categories={categories}
+      />
     </div>
   );
 }
-

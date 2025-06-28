@@ -1,34 +1,45 @@
 // src/components/product/ProductPageClient.tsx
 "use client";
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react'; // เพิ่ม useEffect
 import { Product } from '@/types/product';
 import { Category } from '@/types/category';
 import ProductCard from '@/components/product/ProductCard';
-// import ProductFilter from './ProductFilter';
+import ProductFilter from '@/components/layout/ProductFilter';
 
 interface ProductPageClientProps {
   initialProducts: Product[];
   categories: Category[];
 }
 
+// --- สร้าง Skeleton Component สำหรับสถานะ Loading ---
+function ProductGridSkeleton() {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div key={i} className="animate-pulse">
+          <div className="aspect-square w-full bg-gray-200 rounded-lg"></div>
+          <div className="mt-4 h-6 bg-gray-200 rounded w-3/4"></div>
+          <div className="mt-2 h-8 bg-gray-200 rounded w-1/2"></div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+
 export default function ProductPageClient({ initialProducts, categories }: ProductPageClientProps) {
-  // // --- ขั้นตอนสำหรับดีบัก ---
-  // // Log นี้จะแสดงผลใน Console ของเบราว์เซอร์ (กด F12)
-  // useEffect(() => {
-  //   console.log("--- INITIAL DATA RECEIVED BY CLIENT ---");
-  //   console.log("List of all Categories:", categories);
-  //   if (initialProducts.length > 0) {
-  //     console.log("Data of the first product:", initialProducts[0]);
-  //     console.log("Categories array of the first product:", initialProducts[0].categories);
-  //   }
-  //   console.log("-------------------------------------");
-  // }, [initialProducts, categories]);
-  
-  
+  // State สำหรับเก็บค่าจาก Filter
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
+
+  // --- การแก้ไข: เพิ่ม State เพื่อตรวจสอบว่า Component ถูก Mount แล้ว ---
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const filteredAndSortedProducts = useMemo(() => {
     let products = [...initialProducts];
@@ -40,17 +51,12 @@ export default function ProductPageClient({ initialProducts, categories }: Produ
     }
 
     if (selectedCategory !== 'all') {
-      products = products.filter(product => {
-        const hasCategory = product.categories?.some(cat => cat.slug === selectedCategory);
-        
-        // // --- ส่วนดีบักเพิ่มเติม ---
-        // // Log นี้จะทำงานทุกครั้งที่คุณเลือกฟิลเตอร์
-        // if (hasCategory) {
-        //   console.log(`✅ MATCH: Product "${product.name}" has category slug "${selectedCategory}".`);
-        // }
-        
-        return hasCategory;
-      });
+      const selectedCategoryId = categories.find(cat => cat.slug === selectedCategory)?.id;
+      if (selectedCategoryId) {
+        products = products.filter(product =>
+          product.categories?.some(cat => cat.id === selectedCategoryId)
+        );
+      }
     }
     
     if (sortBy === 'price-asc') {
@@ -60,14 +66,15 @@ export default function ProductPageClient({ initialProducts, categories }: Produ
     }
 
     return products;
-  }, [searchTerm, selectedCategory, sortBy, initialProducts]);
+  }, [searchTerm, selectedCategory, sortBy, initialProducts, categories]);
+
 
   return (
     <div>
       <h1 className="text-4xl font-bold text-center mb-8">All Products</h1>
       
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {/* <aside className="lg:col-span-1">
+        <aside className="lg:col-span-1">
           <ProductFilter
             categories={categories}
             selectedCategory={selectedCategory}
@@ -76,10 +83,13 @@ export default function ProductPageClient({ initialProducts, categories }: Produ
             onSearchChange={setSearchTerm}
             onSortChange={setSortBy}
           />
-        </aside> */}
+        </aside>
 
         <main className="lg:col-span-3">
-          {filteredAndSortedProducts.length > 0 ? (
+          {/* --- การแก้ไข: แสดง Skeleton ขณะที่ยังไม่ Mount --- */}
+          {!isMounted ? (
+            <ProductGridSkeleton />
+          ) : filteredAndSortedProducts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
               {filteredAndSortedProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
