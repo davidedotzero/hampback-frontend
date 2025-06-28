@@ -4,7 +4,8 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Search, User, MapPin, Menu, X } from 'lucide-react';
+import { MapPin, Menu, X } from 'lucide-react';
+import InstantSearch from '@/components/search/InstantSearch';
 
 const navLinks = [
   { href: "/", label: "HOME" },
@@ -29,16 +30,8 @@ export default function Navbar() {
 
           {/* Search Bar (สำหรับจอใหญ่) */}
           <div className="hidden lg:flex w-3/5 justify-center">
-            <div className="relative w-full max-w-lg">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                <Search className="h-5 w-5 text-gray-400" />
-              </span>
-              <input 
-                type="text" 
-                placeholder="SEARCH..."
-                className="w-full bg-gray-100 rounded-full py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-purple-300"
-              />
-            </div>
+             {/* 2. แทนที่ form เดิมด้วย Component ใหม่ */}
+            <InstantSearch />
           </div>
 
           {/* Icons (สำหรับจอใหญ่) */}
