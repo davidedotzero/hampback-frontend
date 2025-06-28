@@ -56,7 +56,7 @@ export default function Navbar() {
         </div>
 
         {/* แถวล่าง: Navigation Links (สำหรับจอใหญ่) */}
-        <div className="hidden lg:flex justify-center items-center py-3 border-t">
+        <div className="hidden lg:flex justify-center items-center py-3 border-t border-gray-200">
           <ul className="flex items-center space-x-8 text-sm font-medium">
             {navLinks.map((link) => (
               <li key={link.href}>
