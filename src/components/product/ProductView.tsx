@@ -33,7 +33,7 @@ function ProductGallery({ images }: { images: { src: string; alt: string; id: nu
           alt={selectedImage.alt || 'Selected product image'}
           width={800}
           height={800}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover overflow-hidden"
           priority // โหลดรูปนี้ก่อนเพื่อประสิทธิภาพ
         />
       </div>
@@ -80,7 +80,7 @@ export default function ProductView({ product }: { product: Product | null }) {
     <div className="space-y-12 lg:space-y-16">
       {/* ส่วนบน: รูปภาพและข้อมูลเบื้องต้น */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16 items-start">
-        <ProductGallery images={product.images} />
+      <ProductGallery images={product.images} />
         <div className="sticky top-28">
           <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-3">{product.name}</h1>
           
@@ -97,7 +97,7 @@ export default function ProductView({ product }: { product: Product | null }) {
           />
           
           <div className="mt-8">
-            <button className="w-full bg-gray-900 text-white font-bold py-4 px-6 rounded-lg hover:bg-gray-700 transition-colors text-lg">Add to Cart</button>
+            <button className="w-full bg-gray-900 text-white font-bold py-4 px-6 rounded-lg hover:bg-gray-700 transition-colors text-lg">Get a Dealer</button>
           </div>
         </div>
       </div>

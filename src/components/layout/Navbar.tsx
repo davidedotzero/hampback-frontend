@@ -23,7 +23,7 @@ export default function Navbar() {
         <div className="flex justify-between items-center py-4">
           <div className="w-1/3 lg:w-1/5">
             <Link href="/">
-              <Image src="/hampback-logo.png" alt="Hampback Logo" width={150} height={50} priority />
+              <Image src="/next.svg" alt="Hampback Logo" width={150} height={50} priority />
             </Link>
           </div>
 
@@ -44,7 +44,7 @@ export default function Navbar() {
           {/* Icons (สำหรับจอใหญ่) */}
           <div className="hidden lg:flex w-1/5 justify-end items-center space-x-4">
             <button className="text-gray-600 hover:text-purple-600"><MapPin size={24} /></button>
-            <button className="text-gray-600 hover:text-purple-600"><User size={24} /></button>
+            {/* <button className="text-gray-600 hover:text-purple-600"><User size={24} /></button> */}
           </div>
 
           {/* Hamburger Menu Button (สำหรับจอมือถือและแท็บเล็ต) */}
