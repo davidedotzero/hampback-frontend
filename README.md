@@ -10,15 +10,28 @@
 
 ---
 
+## เทคโนโลยีหลัก (Tech Stack)
+
+* **Framework:** [Next.js](https://nextjs.org/)
+* **UI Library:** [React](https://react.dev/)
+* **Language:** [TypeScript](https://www.typescriptlang.org/)
+* **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+* **Icons:** [Lucide React](https://lucide.dev/)
+* **Interactive Maps:** [React Leaflet](https://react-leaflet.js.org/)
+* **Security:** [DOMPurify](https://github.com/cure53/DOMPurify) (สำหรับป้องกัน XSS)
+
+สำหรับรายชื่อ Dependencies ทั้งหมด สามารถดูได้ที่ไฟล์ `package.json`
+
+---
+
 ## ฟีเจอร์หลัก
 
-* **Product Catalog:** แสดงรายการสินค้าทั้งหมดพร้อมระบบกรองตามหมวดหมู่และเรียงลำดับตามราคา/ความใหม่
-* **Product Detail Page:** หน้าแสดงรายละเอียดสินค้าแบบเจาะลึก พร้อมแกลเลอรีรูปภาพ, วิดีโอ, และข้อมูลจำเพาะ (Specifications)/page.tsx]
+* **Product Catalog:** แสดงรายการสินค้าทั้งหมดพร้อมระบบกรองและเรียงลำดับ
+* **Product Detail Page:** หน้าแสดงรายละเอียดสินค้าแบบเจาะลึก พร้อมแกลเลอรี, วิดีโอ, และข้อมูลจำเพาะ
 * **Instant Search:** ระบบค้นหาสินค้าแบบทันที (Real-time) จาก Navbar
-* **Wishlist:** ระบบบันทึกสินค้าที่ชื่นชอบไว้ในเบราว์เซอร์ของผู้ใช้ด้วย `localStorage`
+* **Wishlist:** ระบบบันทึกสินค้าที่ชื่นชอบไว้ในเบราว์เซอร์ของผู้ใช้
 * **Dealer Locator:** หน้าสำหรับค้นหาตัวแทนจำหน่าย พร้อมแผนที่แบบ Interactive
-* **Technical SEO:** ปรับปรุง SEO ด้วย Dynamic Sitemap และ Structured Data (JSON-LD) สำหรับหน้าสินค้า/page.tsx]
-* **Responsive Design:** รองรับการแสดงผลบนทุกขนาดหน้าจอ ทั้ง Desktop, Tablet, และ Mobile
+* **Technical SEO:** ปรับปรุง SEO ด้วย Dynamic Sitemap และ Structured Data (JSON-LD)
 
 ---
 
@@ -40,14 +53,10 @@
 2.  **Install dependencies:**
     ```bash
     npm install
-    # or
-    yarn install
-    # or
-    pnpm install
     ```
 
 3.  **ตั้งค่า Environment Variables:**
-    คัดลอกไฟล์ `.env.example` (ถ้ามี) หรือสร้างไฟล์ใหม่ชื่อ `.env.local` ที่รากของโปรเจกต์ และใส่ข้อมูลที่จำเป็น:
+    สร้างไฟล์ใหม่ชื่อ `.env.local` ที่รากของโปรเจกต์ และใส่ข้อมูลที่จำเป็น:
 
     ```env
     # .env.local
@@ -55,7 +64,7 @@
     # URL ของ WordPress REST API
     NEXT_PUBLIC_WORDPRESS_API_URL=[https://your-wordpress-site.com/wp-json](https://your-wordpress-site.com/wp-json)
 
-    # WooCommerce API Keys (สำหรับดึงข้อมูลที่ต้องมีการยืนยันตัวตน)
+    # WooCommerce API Keys
     WOOCOMMERCE_CONSUMER_KEY=ck_xxxxxxxxxxxxxxxxxxxxxxxx
     WOOCOMMERCE_CONSUMER_SECRET=cs_xxxxxxxxxxxxxxxxxxxxxxxx
     ```
@@ -71,15 +80,14 @@
 
 ## คำสั่ง (Scripts) ที่มีให้ใช้
 
-* `npm run dev`: รันแอปพลิเคชันในโหมดพัฒนา (Development Mode)
-* `npm run build`: สร้างโปรเจกต์สำหรับนำขึ้น Production
-* `npm run start`: รันแอปพลิเคชันจากเวอร์ชันที่ build แล้ว (Production Mode)
+* `npm run dev`: รันแอปพลิเคชันในโหมดพัฒนา
+* `npm run build`: สร้างโปรเจกต์สำหรับ Production
+* `npm run start`: รันแอปพลิเคชันจากเวอร์ชันที่ build แล้ว
 * `npm run lint`: ตรวจสอบคุณภาพของโค้ดด้วย ESLint
 
 ---
 
 ## การ Deploy
 
-วิธีที่ง่ายและแนะนำที่สุดในการ Deploy โปรเจกต์ Next.js คือการใช้ [Vercel Platform](https://vercel.com/new) ซึ่งเป็นผู้สร้าง Next.js เอง Vercel จะจัดการตั้งค่าต่างๆ รวมถึง Environment Variables ให้โดยอัตโนมัติ
-
+วิธีที่ง่ายและแนะนำที่สุดในการ Deploy โปรเจกต์ Next.js คือการใช้ [Vercel Platform](https://vercel.com/new)
 
