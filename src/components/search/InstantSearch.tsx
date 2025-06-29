@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Search, Loader2 } from 'lucide-react';
 import { Product } from '@/types/product';
+import { sanitizeHtml } from '@/lib/sanitizeHtml';
 
 // ฟังก์ชัน Debounce เพื่อหน่วงการส่ง request
 function useDebounce(value: string, delay: number) {
@@ -103,7 +104,7 @@ export default function InstantSearch() {
 
       {/* Dropdown แสดงผลการค้นหา */}
       {isFocused && (
-        <div className="absolute top-full mt-2 w-full bg-white rounded-lg shadow-2xl border max-h-[60vh] overflow-y-auto z-50">
+        <div className="absolute top-full mt-2 w-full bg-white rounded-lg shadow-2xl max-h-[60vh] overflow-y-auto z-50">
           {isLoading && (
             <div className="p-4 flex justify-center items-center">
               <Loader2 className="h-6 w-6 animate-spin text-purple-600" />
@@ -130,7 +131,7 @@ export default function InstantSearch() {
                     </div>
                     <div>
                       <p className="font-semibold">{product.name}</p>
-                      <p className="text-sm text-gray-600" dangerouslySetInnerHTML={{ __html: product.price_html || `฿${product.price}`}} />
+                      <p className="text-sm text-gray-600" dangerouslySetInnerHTML={{ __html: sanitizeHtml(product.price_html || `฿${product.price}`) }} />
                     </div>
                   </Link>
                 </li>

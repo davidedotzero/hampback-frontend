@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Product } from '@/types/product';
 import ProductVideo from './video/ProductVideo';
+import { sanitizeHtml } from '@/lib/sanitizeHtml';
 
 // --- สร้าง Sub-Component สำหรับจัดการแกลเลอรีรูปภาพ ---
 function ProductGallery({ images }: { images: { src: string; alt: string; id: number }[] }) {
@@ -93,13 +94,13 @@ export default function ProductView({ product }: { product: Product | null }) {
           {/* ใช้ price_html จาก WooCommerce เพื่อแสดงราคาที่จัดรูปแบบแล้ว (เช่น ราคาลด) */}
           <div
             className="text-3xl font-bold text-purple-700 mb-6"
-            dangerouslySetInnerHTML={{ __html: product.price_html || `฿${product.price}` }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(product.price_html || `฿${product.price}`) || 'Price not available.' }}
           />
 
           {/* ใช้ short_description สำหรับคำอธิบายย่อ */}
           <div
             className="prose mt-4 text-gray-700"
-            dangerouslySetInnerHTML={{ __html: product.short_description }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(product.short_description) || 'No description available.' }}
           />
 
           <div className="mt-8">
@@ -117,7 +118,7 @@ export default function ProductView({ product }: { product: Product | null }) {
         {product.description && (
           <div className="py-8 border-t border-gray-200">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 uppercase">Product Description</h2>
-            <div className="leading-loose prose max-w-none" dangerouslySetInnerHTML={{ __html: product.description }} />
+            <div className="leading-loose prose max-w-none" dangerouslySetInnerHTML={{ __html: sanitizeHtml(product.description) || 'No description available.' }} />
           </div>
         )}
 
@@ -127,7 +128,7 @@ export default function ProductView({ product }: { product: Product | null }) {
             <h2 className="text-2xl font-bold text-gray-800 mb-4 uppercase">Specifications</h2>
             <div
               className="grid grid-cols-1 leading-loose prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: product.acf.product_specifications }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(product.acf.product_specifications) || 'No specifications available.' }}
             />
           </div>
         )}
