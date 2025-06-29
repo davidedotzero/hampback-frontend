@@ -2,14 +2,20 @@
 
 import ProductPageClient from '@/components/layout/ProductPageClient';
 import { Product } from '@/types/product'; 
-import { Category } from '@/types/category'; 
+import { Category } from '@/types/category';
+import type { Metadata } from 'next';
+
+// --- Page Specific Metadata ---
+export const metadata: Metadata = {
+  title: 'All Products',
+  description: 'Browse our complete collection of high-quality music gear, instruments, and accessories. Find everything you need from Hampback.',
+};
 
 const wpApiBaseUrl = process.env.NEXT_PUBLIC_WORDPRESS_API_URL;
 
 // --- API endpoint ของ WooCommerce ---
 const productsApiUrl = `${wpApiBaseUrl}/wc/v3/products?per_page=100`;
 const categoriesApiUrl = `${wpApiBaseUrl}/wc/v3/products/categories?_fields=id,name,slug`;
-
 // --- Authentication Header (สำคัญมาก) ---
 const consumerKey = process.env.WOOCOMMERCE_CONSUMER_KEY || '';
 const consumerSecret = process.env.WOOCOMMERCE_CONSUMER_SECRET || '';

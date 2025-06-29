@@ -6,6 +6,8 @@ import { Product } from '@/types/product';
 import type { Metadata } from 'next';
 
 const wpApiBaseUrl = process.env.NEXT_PUBLIC_WORDPRESS_API_URL;
+// !!! IMPORTANT: Replace this with your actual production domain !!!
+const baseUrl = 'https://hampback.vercel.app'; // <--- แก้ไขเป็นโดเมนจริงของคุณ
 
 // --- ฟังก์ชันสำหรับดึงข้อมูลสินค้า (จากคู่มือ) ---
 async function getSingleProductBySlug(slug: string): Promise<Product | null> {
@@ -20,7 +22,6 @@ async function getSingleProductBySlug(slug: string): Promise<Product | null> {
       next: { revalidate: 60 },
     });
     if (!response.ok) {
-      // ถ้าหาไม่เจอ หรือมีปัญหา ให้ส่ง null กลับไปอย่างเงียบๆ
       return null;
     }
     
@@ -33,24 +34,63 @@ async function getSingleProductBySlug(slug: string): Promise<Product | null> {
 }
 
 // --- ฟังก์ชัน generateMetadata (ดึงข้อมูลจาก WooCommerce) ---
+// export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+//   const product = await getSingleProductBySlug(params.slug);
+
+//   if (!product) {
+//     return {
+//       title: 'Product Not Found',
+//     };
+//   }
+
+//   const description = product.short_description.replace(/<[^>]+>/g, '');
+
+//   return {
+//     title: product.name,
+//     description: description,
+//   };
+// }
+
+// --- Dynamic Metadata Generation (SEO Optimized) ---
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const product = await getSingleProductBySlug(params.slug);
 
   if (!product) {
-    return {
-      title: 'Product Not Found',
-    };
+    return { title: 'Product Not Found' };
   }
 
-  const description = product.short_description.replace(/<[^>]+>/g, '');
+  // Sanitize description for meta tags
+  const description = product.short_description.replace(/<[^>]+>/g, '').trim();
+  const mainImage = product.images?.[0]?.src;
 
   return {
     title: product.name,
     description: description,
+    keywords: [product.name, 'Hampback', ...product.categories.map(c => c.name)],
+    openGraph: {
+      title: `${product.name} | Hampback`,
+      description: description,
+      url: `${baseUrl}/product/${product.slug}`,
+      siteName: 'Hampback Music Gear',
+      images: mainImage ? [
+        {
+          url: mainImage,
+          width: 800,
+          height: 800,
+          alt: product.name,
+        },
+      ] : [],
+      locale: 'en_US', // Or 'th_TH'
+      type: 'website',
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: `${product.name} | Hampback`,
+        description: description,
+        images: mainImage ? [mainImage] : [],
+    },
   };
 }
-
-// ... (ฟังก์ชัน generateStaticParams ไม่มีการเปลี่ยนแปลง) ...
 
 // --- Page Component (Server Component หลัก) ---
 export default async function ProductDetailPage({ params }: { params: { slug: string } }) {

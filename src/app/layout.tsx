@@ -11,9 +11,21 @@ import { WishlistProvider } from "@/context/WishlistContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
+// --- SEO Optimized Metadata Template ---
 export const metadata: Metadata = {
-  title: "Hampback - High Quality Music Gear",
-  description: "Explore premium musical instruments and accessories.",
+  // Title template allows child pages to set their own title while keeping the brand name.
+  title: {
+    template: '%s | Hampback Music Gear', // %s will be replaced by the child page's title
+    default: 'Hampback - High Quality Music Gear & Accessories', // Default title for pages without a specific one
+  },
+  description: "Explore premium musical instruments, guitar care products, and accessories from Hampback. Quality you can hear.",
+  // Optional: Add more default metadata for social sharing
+  openGraph: {
+      type: 'website',
+      locale: 'th_TH', // or 'th_TH'
+      url: 'https://hampback.vercel.app', // <-- แก้ไขเป็นโดเมนจริงของคุณ
+      siteName: 'Hampback Music Gear',
+  },
 };
 
 export default function RootLayout({

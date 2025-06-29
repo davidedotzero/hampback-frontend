@@ -9,6 +9,7 @@ export interface Product {
   description: string;
   images: { id: number; src: string; alt: string; }[];
   categories: { id: number; name: string; slug: string; }[];
+  date_modified?: string;
   acf?: {
     product_specifications?: string;
     product_videos?: {
