@@ -42,7 +42,7 @@ export default function Footer() {
   return (
     <section 
       className="relative bg-cover bg-center py-16 sm:py-20" 
-      style={{ backgroundImage: "url('/footer-bg.jpg')" }}
+      // style={{ backgroundImage: "url('/footer-bg.jpg')" }}
     >
       <div className="absolute inset-0 bg-black opacity-50"></div>
 
@@ -52,8 +52,8 @@ export default function Footer() {
             
             <div className="flex flex-col items-center md:items-start text-center md:text-left">
               <Image
-                src="/hampback-logo-dark.png"
-                alt="Hampback Logo Dark"
+                src="/hampback-logo.svg"
+                alt="Hampback Logo"
                 width={200}
                 height={70}
                 className="object-contain"

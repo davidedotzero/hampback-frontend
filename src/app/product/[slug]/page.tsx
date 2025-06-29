@@ -94,8 +94,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
 // --- Page Component (Server Component หลัก) ---
 export default async function ProductDetailPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
-  const product = await getSingleProductBySlug(slug);
+  const product = await getSingleProductBySlug(params.slug);
 
   // --- การแก้ไข: เพิ่ม Guard Clause เข้ามา ---
   // ตรวจสอบว่า `product` มีค่าหรือไม่ ก่อนที่จะส่งไปให้ Client Component
