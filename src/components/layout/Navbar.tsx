@@ -36,7 +36,7 @@ export default function Navbar() {
 
           {/* Icons (สำหรับจอใหญ่) */}
           <div className="hidden lg:flex w-1/5 justify-end items-center space-x-4">
-            <button className="text-gray-600 hover:text-purple-600"><MapPin size={24} /></button>
+            <button aria-label="Find a Dealer" className="text-gray-600 hover:text-purple-600"><MapPin size={24} /></button>
             {/* <button className="text-gray-600 hover:text-purple-600"><User size={24} /></button> */}
           </div>
 
