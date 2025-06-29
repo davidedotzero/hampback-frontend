@@ -5,12 +5,21 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Heart } from 'lucide-react';
 import { Product } from '@/types/product';
+import { useWishlist } from '@/context/WishlistContext';
 
 export default function ProductCard({ product }: { product: Product }) {
+  const { isInWishlist, toggleWishlist } = useWishlist();
+  const isWishlisted = isInWishlist(product.id);
+
   // ดึงข้อมูลจากโครงสร้างใหม่ของ WooCommerce
   const imageUrl = product.images?.[0]?.src;
   const price = product.price;
   const name = product.name;
+
+  const handleWishlistClick = (e: React.MouseEvent) => {
+    e.preventDefault(); // ป้องกันการเปลี่ยนเส้นทางของลิงก์
+    toggleWishlist(product.id);
+  };
 
   return (
     <div className="group">
@@ -38,9 +47,14 @@ export default function ProductCard({ product }: { product: Product }) {
             <button 
               className="text-gray-400 hover:text-red-500 transition-colors focus:outline-none"
               aria-label="Add to wishlist"
-              onClick={(e) => { e.preventDefault(); console.log('Wishlist clicked!'); }}
+              onClick={handleWishlistClick}
             >
-              <Heart size={28} strokeWidth={1.5} />
+              <Heart 
+                size={28} 
+                strokeWidth={1.5} 
+                // เปลี่ยนสีและรูปแบบตามสถานะ isWishlisted
+                className={`transition-all ${isWishlisted ? 'text-red-500 fill-current' : 'text-gray-400'}`}
+              />
             </button>
           </div>
         </div>
