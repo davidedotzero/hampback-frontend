@@ -8,53 +8,48 @@ import ProductVideo from './video/ProductVideo';
 import { sanitizeHtml } from '@/lib/sanitizeHtml';
 
 // --- สร้าง Sub-Component สำหรับจัดการแกลเลอรีรูปภาพ ---
-function ProductGallery({ images }: { images: { src: string; alt: string; id: number }[] }) {
-  // ถ้าไม่มีรูปภาพเลย ให้แสดงเป็น placeholder
+function ProductGallery({ images }: { images: { id?: number; src: string; alt: string }[] }) {
+  // ถ้าไม่มีรูปภาพ ให้แสดงผลเป็น placeholder
   if (!images || images.length === 0) {
-    return (
-      <div className="aspect-square w-full flex items-center justify-center bg-gray-100 text-gray-400 rounded-lg">
-        No Image Available
-      </div>
-    );
+    return <div className="aspect-square w-full flex items-center justify-center bg-gray-100 text-gray-400 rounded-lg">No Image Available</div>;
   }
-
-  // ใช้ useState เพื่อจัดการว่ารูปไหนกำลังถูกเลือกอยู่
-  const [selectedImage, setSelectedImage] = useState(images[0]);
-
-  // ใช้ useEffect เพื่อเปลี่ยนรูปหลักเมื่อ props เปลี่ยนไป (เผื่อข้อมูลโหลดช้า)
-  useEffect(() => {
-    setSelectedImage(images[0]);
-  }, [images]);
+  
+  // ตั้งค่า State เริ่มต้นจาก props โดยตรงเพื่อป้องกัน Hydration Mismatch
+  const [selectedImageUrl, setSelectedImageUrl] = useState(images[0].src);
 
   return (
     <div className="w-full">
       {/* ส่วนแสดงรูปภาพหลักขนาดใหญ่ */}
-      <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden shadow-lg mb-4">
-        <Image
-          src={selectedImage.src}
-          alt={selectedImage.alt || 'Selected product image'}
-          width={800}
-          height={800}
-          className="w-full h-full object-cover overflow-hidden"
-          priority // โหลดรูปนี้ก่อนเพื่อประสิทธิภาพ
-        />
+      <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden shadow-lg mb-3">
+        {selectedImageUrl && (
+          <Image 
+            src={selectedImageUrl} 
+            alt="Selected product image" 
+            width={800} 
+            height={800} 
+            className="w-full h-full object-cover transition-opacity duration-300" 
+            priority 
+          />
+        )}
       </div>
-
-      {/* ส่วนแสดงรูปภาพ Thumbnail ด้านล่าง (จะแสดงก็ต่อเมื่อมีรูปมากกว่า 1 รูป) */}
+      
+      {/* --- การแก้ไข: ส่วนแสดงรูปภาพเล็กๆ (Thumbnail) ที่สามารถเลื่อนได้ --- */}
       {images.length > 1 && (
-        <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
-          {images.map((image) => (
+        // ใช้ flex และ overflow-x-auto เพื่อสร้างแถวที่เลื่อนได้ในแนวนอน
+        <div className="flex space-x-3 overflow-x-auto pb-2">
+          {images.map((image, index) => (
             <button
-              key={image.id}
-              onClick={() => setSelectedImage(image)}
-              className={`aspect-square rounded-md overflow-hidden border-2 transition-all ${selectedImage.id === image.id ? 'border-purple-600 ring-2 ring-purple-300' : 'border-transparent'} hover:border-purple-400`}
+              key={`${image.id}-${index}`}
+              onClick={() => setSelectedImageUrl(image.src)}
+              // กำหนดขนาดของ Thumbnail ให้คงที่และไม่หด
+              className={`relative w-40 h-40 flex-shrink-0 rounded-md overflow-hidden border-2 transition-all duration-200 ${selectedImageUrl === image.src ? 'border-purple-600 ring-2 ring-purple-300' : 'border-gray-200 hover:border-purple-400'}`}
             >
-              <Image
-                src={image.src}
-                alt={image.alt || `Product thumbnail`}
-                width={150}
-                height={150}
-                className="w-full h-full object-cover"
+              <Image 
+                src={image.src} 
+                alt={image.alt || `Product thumbnail ${index + 1}`} 
+                fill // ใช้ fill เพื่อให้รูปภาพเต็มพื้นที่ของปุ่ม
+                style={{objectFit: 'cover'}}
+                sizes="(max-width: 768px) 20vw, 10vw" // ช่วย Next.js โหลดรูปขนาดที่เหมาะสม
               />
             </button>
           ))}
