@@ -100,14 +100,34 @@ export default function ProductView({ product }: { product: Product | null }) {
           {/* ใช้ short_description สำหรับคำอธิบายย่อ */}
           <div
             className="prose mt-4 text-gray-700"
-            dangerouslySetInnerHTML={{ __html: sanitizeHtml(product.short_description) || 'No description available.' }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(product.short_description)}}
           />
 
           <div className="mt-8">
             <button className="w-full bg-gray-900 text-white font-bold py-4 px-6 rounded-lg hover:bg-gray-700 transition-colors text-lg">Get a Dealer</button>
           </div>
+
+          {/* แสดงผล Specifications จาก ACF */}
+          {product.acf?.product_specifications && (
+          <div className="mt-10 border-t pt-6">
+            <h2 className="text-xl font-bold text-gray-800 mb-4">Specifications</h2>
+            {/* การแก้ไข:
+              - ใช้ arbitrary variants `[&_...]` เพื่อควบคุมสไตล์ของ HTML ที่มาจาก WordPress ได้อย่างละเอียด
+            */}
+            <div 
+              className="prose prose-sm max-w-none
+                         [&_table]:w-full [&_table]:table-fixed
+                         [&_tr]:border-b [&_tr]:border-gray-200
+                         [&_th]:w-[30%] [&_th]:pr-4 [&_th]:py-2 [&_th]:text-left [&_th]:font-semibold [&_th]:text-gray-700 [&_th]:align-top
+                         [&_td]:w-[70%] [&_td]:py-2 [&_td]:pl-4 [&_td]:align-top
+                         [&_h2]:m-0 [&_h2]:text-xl"
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(product.acf.product_specifications) }} 
+            />
+          </div>
+        )}
         </div>
       </div>
+
 
       {/* ส่วน Video (ถ้ามี) */}
       <ProductVideo iframeHtmls={videoIframes} />
@@ -119,17 +139,6 @@ export default function ProductView({ product }: { product: Product | null }) {
           <div className="py-8 border-t border-gray-200">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 uppercase">Product Description</h2>
             <div className="leading-loose prose max-w-none" dangerouslySetInnerHTML={{ __html: sanitizeHtml(product.description) || 'No description available.' }} />
-          </div>
-        )}
-
-        {/* แสดงผล Specifications จาก ACF */}
-        {product.acf?.product_specifications && (
-          <div className="item-start text-left py-8 border-t border-gray-200">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4 uppercase">Specifications</h2>
-            <div
-              className="grid grid-cols-1 leading-loose prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: sanitizeHtml(product.acf.product_specifications) || 'No specifications available.' }}
-            />
           </div>
         )}
       </div>
