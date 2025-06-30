@@ -1,25 +1,36 @@
-// src/components/Footer.tsx
+// src/components/layout/Footer.tsx
 "use client";
 
-import { useState, FormEvent } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
+import { Loader2 } from 'lucide-react';
 
 export default function Footer() {
   const [email, setEmail] = useState('');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setIsLoading(true);
+  const validateEmail = (email: string) => {
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     setMessage('');
 
+    if (!validateEmail(email)) {
+      setStatus('error');
+      setMessage('Please enter a valid email address.');
+      return;
+    }
+
+    setStatus('loading');
+
     try {
-      const response = await fetch('/api/subscribe', {
+      const response = await fetch('/api/newsletter', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
 
@@ -29,20 +40,20 @@ export default function Footer() {
         throw new Error(data.message || 'Something went wrong.');
       }
       
-      setMessage(data.message);
-      setEmail(''); // เคลียร์ช่อง input เมื่อสำเร็จ
+      setStatus('success');
+      setMessage('Thank you for subscribing!');
+      setEmail('');
 
     } catch (error: any) {
-      setMessage(error.message);
-    } finally {
-      setIsLoading(false);
+      setStatus('error');
+      setMessage(error.message || 'An error occurred. Please try again.');
     }
   };
 
   return (
     <section 
       className="relative bg-cover bg-center py-16 sm:py-20" 
-      // style={{ backgroundImage: "url('/footer-bg.jpg')" }}
+      style={{ backgroundImage: "url('/footer-bg.jpg')" }}
     >
       <div className="absolute inset-0 bg-black opacity-50"></div>
 
@@ -68,25 +79,36 @@ export default function Footer() {
                 Be the first to know about new products, featured content, and exclusive offers.
               </p>
               
-              <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-center gap-2">
-                <input 
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email address"
-                  className="w-full sm:flex-grow border border-gray-300 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-purple-300"
-                  required
-                  disabled={isLoading}
-                />
-                <button 
-                  type="submit"
-                  className="w-full sm:w-auto bg-gray-800 text-white font-bold rounded-lg px-6 py-3 hover:bg-gray-700 transition-colors disabled:bg-gray-400"
-                  disabled={isLoading}
-                >
-                  {isLoading ? 'Subscribing...' : 'Sign up'}
-                </button>
+              {/* THE FIX: Add noValidate to the form to bypass default browser validation */}
+              <form onSubmit={handleSubmit} noValidate className="flex flex-col items-start gap-2">
+                <div className="flex flex-col sm:flex-row items-center gap-2 w-full">
+                  <input 
+                    type="email" 
+                    placeholder="Enter your email address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={status === 'loading'}
+                    className="w-full sm:flex-grow border border-gray-300 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-purple-300 disabled:bg-gray-100"
+                    required
+                  />
+                  <button 
+                    type="submit"
+                    disabled={status === 'loading'}
+                    className="w-full sm:w-auto bg-gray-800 text-white font-bold rounded-lg px-6 py-3 hover:bg-gray-700 transition-colors flex items-center justify-center disabled:bg-gray-400"
+                  >
+                    {status === 'loading' ? (
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                    ) : (
+                      'Sign up'
+                    )}
+                  </button>
+                </div>
+                {message && (
+                  <p className={`mt-2 text-sm ${status === 'error' ? 'text-red-500' : 'text-green-600'}`}>
+                    {message}
+                  </p>
+                )}
               </form>
-              {message && <p className="text-sm mt-4 text-center md:text-left">{message}</p>}
             </div>
           </div>
         </div>
