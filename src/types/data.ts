@@ -24,3 +24,14 @@ export interface AboutPageData {
     }[];
   };
 }
+
+export interface HeroImage {
+  id: number;
+  url: string;
+  alt: string;
+  // Optional: link to a product if you want a specific image to be clickable
+  // You can add this as a custom field to the image attachment in WordPress
+  product_slug?: string;
+  product_name?: string; // Add a field for the product name
+  category_name?: string; // Add a field for the category name
+}
