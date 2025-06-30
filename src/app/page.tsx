@@ -1,71 +1,66 @@
 // src/app/page.tsx
-// DEBUGGING VERSION: This version adds console logs to diagnose why images are not appearing.
+// FINAL ROBUST METHOD: This version fetches full image details using the IDs from the ACF Group.
+// This method is not dependent on the ACF "Return Format" setting.
 
 import InteractiveHero from '@/components/home/InteractiveHero';
 import { HeroImage } from '@/types/data';
 
-/**
- * Fetches image data from an ACF Group field on the WordPress homepage.
- * The Group field contains multiple individual Image sub-fields.
- * @returns {Promise<HeroImage[]>} A list of images for the hero carousel.
- */
 async function getHeroImages(): Promise<HeroImage[]> {
-    console.log("--- [DEBUG] Starting getHeroImages function ---");
+    console.log("--- [DEBUG] Starting getHeroImages (Robust Fetch Method) ---");
     try {
         const wpApiBaseUrl = process.env.NEXT_PUBLIC_WORDPRESS_API_URL;
-        // !!! IMPORTANT: Change this to the ID of your actual homepage in WordPress !!!
+        // !!! IMPORTANT: Make sure this ID is correct for your homepage !!!
         const HOMEPAGE_ID = 2; 
-        console.log(`[DEBUG] Fetching data for Homepage ID: ${HOMEPAGE_ID}`);
 
-        const response = await fetch(`${wpApiBaseUrl}/wp/v2/pages/${HOMEPAGE_ID}?_fields=acf`, {
-            next: { revalidate: 3600 } // Cache for 1 hour
+        // Step 1: Fetch the page to get the ACF group containing image IDs
+        const pageResponse = await fetch(`${wpApiBaseUrl}/wp/v2/pages/${HOMEPAGE_ID}?_fields=acf`, {
+            next: { revalidate: 3600 }
         });
 
-        console.log(`[DEBUG] API Response Status: ${response.status}`);
-        if (!response.ok) {
-            console.error(`[ERROR] Failed to fetch homepage data. Status: ${response.status}`);
-            throw new Error('Failed to fetch homepage data.');
+        if (!pageResponse.ok) {
+            throw new Error(`Failed to fetch homepage data (Status: ${pageResponse.status})`);
         }
 
-        const pageData = await response.json();
-        // Log the entire raw response to see what we're getting from WordPress
-        console.log("[DEBUG] Raw pageData from API:", JSON.stringify(pageData, null, 2));
-        
-        // Access the Group field by its name: 'hero_carousel_images'
+        const pageData = await pageResponse.json();
         const acfGroup = pageData.acf?.hero_carousel_images;
 
-        if (!acfGroup) {
-            console.warn("[WARN] ACF Group 'hero_carousel_images' not found in the API response.");
+        if (!acfGroup || typeof acfGroup !== 'object') {
+            console.warn("ACF Group 'hero_carousel_images' not found or is not an object.");
             return [];
         }
+        console.log("[DEBUG] Received ACF Group with Image IDs:", acfGroup);
 
-        console.log("[DEBUG] Found acfGroup:", acfGroup);
+        // Step 2: Extract all valid image IDs from the group
+        const imageIds = Object.values(acfGroup).filter((id): id is number => typeof id === 'number' && id > 0);
 
-        const images: HeroImage[] = [];
-
-        // Manually check each sub-field inside the group and push it to the array
-        Object.keys(acfGroup).forEach(key => {
-            const img = acfGroup[key];
-            console.log(`[DEBUG] Processing key "${key}":`, img);
-            // Check if the field is a valid image object before adding
-            if (img && typeof img === 'object' && img.id) {
-                const imageData = {
-                    id: img.id,
-                    url: img.url,
-                    alt: img.alt || 'Hampback Hero Image',
-                    product_slug: img.product_slug || '/', // You can add custom fields to image attachments
-                    product_name: img.title || 'Featured Product',
-                    category_name: img.caption || 'Hampback Gear',
-                };
-                images.push(imageData);
-                console.log(`[SUCCESS] Pushed image to array:`, imageData);
-            } else {
-                console.warn(`[WARN] Key "${key}" did not contain a valid image object or was false. Skipping.`);
-            }
-        });
+        if (imageIds.length === 0) {
+            console.warn("No valid image IDs found in the ACF group.");
+            return [];
+        }
+        console.log(`[DEBUG] Found ${imageIds.length} image IDs to fetch:`, imageIds);
         
-        console.log(`--- [DEBUG] Finished getHeroImages. Found ${images.length} images. ---`);
-        return images;
+        // Step 3: Fetch full details for each image ID concurrently
+        const imagePromises = imageIds.map(id => 
+            fetch(`${wpApiBaseUrl}/wp/v2/media/${id}`)
+                .then(res => {
+                    if (!res.ok) throw new Error(`Failed to fetch media ID ${id}`);
+                    return res.json();
+                })
+        );
+
+        const mediaItems = await Promise.all(imagePromises);
+        console.log("[DEBUG] Successfully fetched full data for all media items.");
+
+        // Step 4: Map the full media data to our required HeroImage type
+        return mediaItems.map((item: any) => ({
+            id: item.id,
+            url: item.source_url,
+            alt: item.alt_text || 'Hampback Hero Image',
+            // Use data from the media library fields
+            product_slug: item.description?.rendered.replace(/<p>|<\/p>/g, '').trim() || '/',
+            product_name: item.title?.rendered || 'Featured Product',
+            category_name: item.caption?.rendered.replace(/<p>|<\/p>/g, '').trim() || 'Hampback Gear',
+        }));
 
     } catch (error) {
         console.error("--- [ERROR] An error occurred in getHeroImages ---", error);
@@ -82,7 +77,7 @@ export default async function HomePage() {
       <InteractiveHero heroImages={heroImages} />
       
       <main>
-        {/* Your other homepage sections can go here */}
+        {/* Other sections */}
       </main>
     </>
   );
