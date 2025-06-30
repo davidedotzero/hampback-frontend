@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Product } from '@/types/product';
 import ProductVideo from './video/ProductVideo';
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import { sanitizeHtml } from '@/lib/sanitizeHtml';
 
 // --- สร้าง Sub-Component สำหรับจัดการแกลเลอรีรูปภาพ ---
@@ -73,6 +74,17 @@ export default function ProductView({ product }: { product: Product | null }) {
     );
   }
 
+    // --- 2. สร้างข้อมูลสำหรับ Breadcrumb ---
+  const primaryCategory = product.categories?.[0];
+  const breadcrumbItems = [
+    { label: 'หน้าหลัก', href: '/' },
+    { label: 'สินค้าทั้งหมด', href: '/products' },
+    // ถ้ามีหมวดหมู่หลัก ให้เพิ่มเข้ามาใน path
+    ...(primaryCategory ? [{ label: primaryCategory.name, href: `/products?category=${primaryCategory.slug}` }] : []),
+    // หน้าปัจจุบัน (ชื่อสินค้า) ไม่ต้องมีลิงก์
+    { label: product.name },
+  ];
+
   const videoGroup = product.acf?.product_videos;
   const videoIframes = videoGroup ?
     Object.values(videoGroup).filter((iframe): iframe is string => typeof iframe === 'string' && iframe.length > 0)
@@ -80,6 +92,7 @@ export default function ProductView({ product }: { product: Product | null }) {
 
   return (
     <div className="space-y-12 lg:space-y-16">
+      <Breadcrumb items={breadcrumbItems} />
       {/* ส่วนบน: รูปภาพและข้อมูลเบื้องต้น */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16 items-start">
         <ProductGallery images={product.images} />
