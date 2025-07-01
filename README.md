@@ -16,6 +16,7 @@
 * **UI Library:** [React](https://react.dev/)
 * **Language:** [TypeScript](https://www.typescriptlang.org/)
 * **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+* **3D Graphics & Animations:** [Three.js](https://threejs.org/), [Swiper.js](https://swiperjs.com/)
 * **Icons:** [Lucide React](https://lucide.dev/)
 * **Interactive Maps:** [React Leaflet](https://react-leaflet.js.org/)
 * **Security:** [DOMPurify](https://github.com/cure53/DOMPurify) (สำหรับป้องกัน XSS)
@@ -26,6 +27,7 @@
 
 ## ฟีเจอร์หลัก
 
+* **Interactive Hero Section:** Hero section แบบ 3D Carousel ที่สร้างด้วย Three.js เพื่อประสบการณ์ที่น่าดึงดูด
 * **Product Catalog:** แสดงรายการสินค้าทั้งหมดพร้อมระบบกรองและเรียงลำดับ
 * **Product Detail Page:** หน้าแสดงรายละเอียดสินค้าแบบเจาะลึก พร้อมแกลเลอรี, วิดีโอ, และข้อมูลจำเพาะ
 * **Instant Search:** ระบบค้นหาสินค้าแบบทันที (Real-time) จาก Navbar
@@ -90,4 +92,3 @@
 ## การ Deploy
 
 วิธีที่ง่ายและแนะนำที่สุดในการ Deploy โปรเจกต์ Next.js คือการใช้ [Vercel Platform](https://vercel.com/new)
-

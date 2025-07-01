@@ -1,5 +1,6 @@
 // src/components/home/InteractiveHero.tsx
-// This component is updated to fade out non-active images for better focus.
+// This version removes the performance-intensive shader for a smoother experience,
+// focusing on the core 3D carousel functionality.
 "use client";
 
 import { useRef, useEffect, useState, useCallback } from 'react';
@@ -19,7 +20,6 @@ export default function InteractiveHero({ heroImages }: InteractiveHeroProps) {
   
   const baseRotation = useRef(0);
   const mouseRotationOffset = useRef(0);
-  const groupRef = useRef<THREE.Group | null>(null);
 
   const handleDotClick = useCallback((index: number) => {
     setActiveIndex(index);
@@ -40,25 +40,27 @@ export default function InteractiveHero({ heroImages }: InteractiveHeroProps) {
     currentMount.appendChild(renderer.domElement);
 
     // --- Lighting ---
-    const ambientLight = new THREE.AmbientLight(0xffffff, 2.0);
-    scene.add(ambientLight);
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
-    directionalLight.position.set(5, 5, 5);
-    scene.add(directionalLight);
+    // const ambientLight = new THREE.AmbientLight(0xffffff, 2.0);
+    // scene.add(ambientLight);
+    // const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
+    // directionalLight.position.set(5, 5, 5);
+    // scene.add(directionalLight);
 
-    // --- Create 3D Objects ---
+    // --- Create 3D Objects (Carousel) ---
     const group = new THREE.Group();
-    groupRef.current = group;
     const textureLoader = new THREE.TextureLoader();
     const radius = 3.5;
 
     heroImages.forEach((image, i) => {
         const proxyUrl = `/api/image-proxy?url=${encodeURIComponent(image.url)}`;
-        const texture = textureLoader.load(proxyUrl);
+        const texture = textureLoader.load(proxyUrl, (texture) => {
+          texture.generateMipmaps = true;
+          texture.minFilter = THREE.LinearMipmapLinearFilter;
+        });
         const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true, depthWrite: false });
         const geometry = new THREE.PlaneGeometry(2.5, 2.5);
         const plane = new THREE.Mesh(geometry, material);
-        plane.userData.id = i; // Store index for later checks
+        plane.userData.id = i;
         const angle = (i / heroImages.length) * Math.PI * 2;
         plane.position.x = Math.sin(angle) * radius;
         plane.position.z = Math.cos(angle) * radius;
@@ -72,11 +74,8 @@ export default function InteractiveHero({ heroImages }: InteractiveHeroProps) {
     
     let diff = newTargetAngle - baseRotation.current;
     if (Math.abs(diff) > Math.PI) {
-        if (diff > 0) {
-            diff -= Math.PI * 2;
-        } else {
-            diff += Math.PI * 2;
-        }
+        if (diff > 0) diff -= Math.PI * 2;
+        else diff += Math.PI * 2;
     }
     baseRotation.current += diff;
 
@@ -89,15 +88,10 @@ export default function InteractiveHero({ heroImages }: InteractiveHeroProps) {
       currentRotation = lerp(currentRotation, finalTargetRotation, 0.03);
       group.rotation.y = currentRotation;
 
-      // ** THE FIX: Adjust opacity based on the active index **
       group.children.forEach(plane => {
         plane.lookAt(camera.position);
-
-        // Ensure we are working with a Mesh with the correct material type
         if (plane instanceof THREE.Mesh && plane.material instanceof THREE.MeshBasicMaterial) {
-            // Determine the target opacity: 1 for active, 0.3 for inactive
             const targetOpacity = plane.userData.id === activeIndex ? 1.0 : 0.3;
-            // Smoothly transition the opacity
             plane.material.opacity = lerp(plane.material.opacity, targetOpacity, 0.05);
         }
       });
@@ -137,6 +131,7 @@ export default function InteractiveHero({ heroImages }: InteractiveHeroProps) {
   const activeImage = heroImages[activeIndex];
 
   return (
+    // Reverted to a simple, performant gradient background
     <section className="relative w-full h-[75vh] min-h-[500px] bg-white text-black overflow-hidden">
       {/* 3D Canvas */}
       <div ref={mountRef} className="absolute inset-0 z-10" />
@@ -144,7 +139,7 @@ export default function InteractiveHero({ heroImages }: InteractiveHeroProps) {
       {/* Text Content */}
       <div className="absolute inset-0 z-20 flex flex-col justify-end items-center p-8 pointer-events-none">
         <div className="text-center transition-all duration-500 ease-in-out mb-4">
-          <h1 className="text-4xl md:text-6xl font-black uppercase tracking-wider drop-shadow-lg" key={`title-${activeIndex}`}>
+          <h1 className="text-4xl md:text-6xl font-black uppercase tracking-wider text-blacks drop-shadow-md" key={`title-${activeIndex}`}>
             {activeImage?.product_name || 'Hampback Gear'}
           </h1>
           <p className="text-xl text-purple-300 drop-shadow-md mt-2" key={`cat-${activeIndex}`}>
