@@ -44,9 +44,10 @@ export default function Footer() {
       setMessage('Thank you for subscribing!');
       setEmail('');
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       setStatus('error');
-      setMessage(error.message || 'An error occurred. Please try again.');
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred. Please try again.';
+      setMessage(errorMessage);
     }
   };
 
@@ -73,7 +74,7 @@ export default function Footer() {
 
             <div className="text-center md:text-left">
               <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
-                Don't miss out!
+                Don&apos;t miss out!
               </h2>
               <p className="text-gray-600 mb-6">
                 Be the first to know about new products, featured content, and exclusive offers.

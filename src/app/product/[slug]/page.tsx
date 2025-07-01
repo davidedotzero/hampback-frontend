@@ -103,7 +103,7 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
     return (
       <div className="container mx-auto text-center py-20">
         <h1 className="text-4xl font-bold">404 - Product Not Found</h1>
-        <p className="mt-4 text-lg text-gray-600">Sorry, we couldn't find the product you were looking for.</p>
+        <p className="mt-4 text-lg text-gray-600">Sorry, we couldn&apos;t find the product you were looking for.</p>
       </div>
     );
   }

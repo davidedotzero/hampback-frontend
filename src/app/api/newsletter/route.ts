@@ -55,8 +55,11 @@ export async function POST(request: Request) {
       throw new Error('Subscription failed on the WordPress server. Please check plugin settings.');
     }
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Newsletter API Error:', error);
-    return NextResponse.json({ message: error.message || 'Internal Server Error' }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'An unexpected error occurred.';
+    return NextResponse.json(
+      { message: message || 'Internal Server Error' },
+      { status: 500 });
   }
 }

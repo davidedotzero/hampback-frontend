@@ -112,7 +112,7 @@ export default function InstantSearch() {
           )}
 
           {!isLoading && debouncedSearchTerm.length > 1 && results.length === 0 && (
-            <p className="p-4 text-center text-gray-500">No products found for "{debouncedSearchTerm}".</p>
+            <p className="p-4 text-center text-gray-500">No products found for &quot;{debouncedSearchTerm}&quot;.</p>
           )}
 
           {!isLoading && results.length > 0 && (

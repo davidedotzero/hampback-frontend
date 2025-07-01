@@ -1,7 +1,7 @@
 // src/components/layout/Footer.test.tsx
 // This is the updated test file using @testing-library/user-event for more reliable tests.
 
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'; // Import user-event
 import '@testing-library/jest-dom';
 import Footer from './Footer';

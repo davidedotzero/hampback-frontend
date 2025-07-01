@@ -6,6 +6,25 @@ import InteractiveHero from '@/components/home/InteractiveHero';
 import { HeroImage } from '@/types/data';
 
 /**
+ * Represents the structure of a media item from the WordPress REST API.
+ */
+interface WPMediaItem {
+  id: number;
+  source_url: string;
+  alt_text: string;
+  description: {
+    rendered: string;
+  };
+  title: {
+    rendered: string;
+  };
+  caption: {
+    rendered: string;
+  };
+}
+
+
+/**
  * Fetches and processes image data for the Hero Carousel from WordPress.
  * This robust method uses a multi-step process:
  * 1. Fetches the homepage to get an ACF Group field containing image IDs.
@@ -58,7 +77,7 @@ async function getHeroImages(): Promise<HeroImage[]> {
         const mediaItems = await Promise.all(imagePromises);
 
         // Step 4: Map the full media data to our required HeroImage type, cleaning up HTML tags
-        return mediaItems.map((item: any) => ({
+        return mediaItems.map((item: WPMediaItem) => ({
             id: item.id,
             url: item.source_url,
             alt: item.alt_text || 'Hampback Hero Image',

@@ -1,7 +1,7 @@
 // src/components/product/ProductView.tsx
 "use client"; // ระบุว่าเป็น Client Component เพราะต้องมีการโต้ตอบ (คลิกเปลี่ยนรูป)
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import { Product } from '@/types/product';
 import ProductVideo from './video/ProductVideo';
@@ -10,13 +10,13 @@ import { sanitizeHtml } from '@/lib/sanitizeHtml';
 
 // --- สร้าง Sub-Component สำหรับจัดการแกลเลอรีรูปภาพ ---
 function ProductGallery({ images }: { images: { id?: number; src: string; alt: string }[] }) {
+  // ตั้งค่า State เริ่มต้นจาก props โดยตรงเพื่อป้องกัน Hydration Mismatch
+  const [selectedImageUrl, setSelectedImageUrl] = useState(images?.[0]?.src || '');
+
   // ถ้าไม่มีรูปภาพ ให้แสดงผลเป็น placeholder
   if (!images || images.length === 0) {
     return <div className="aspect-square w-full flex items-center justify-center bg-gray-100 text-gray-400 rounded-lg">No Image Available</div>;
   }
-  
-  // ตั้งค่า State เริ่มต้นจาก props โดยตรงเพื่อป้องกัน Hydration Mismatch
-  const [selectedImageUrl, setSelectedImageUrl] = useState(images[0].src);
 
   return (
     <div className="w-full">
