@@ -137,7 +137,7 @@ export default function InteractiveHero({ heroImages }: InteractiveHeroProps) {
   const activeImage = heroImages[activeIndex];
 
   return (
-    <section className="relative w-full h-[75vh] min-h-[500px] bg-gradient-to-b from-gray-900 via-gray-800 to-black text-white overflow-hidden">
+    <section className="relative w-full h-[75vh] min-h-[500px] bg-white text-black overflow-hidden">
       {/* 3D Canvas */}
       <div ref={mountRef} className="absolute inset-0 z-10" />
       
@@ -159,7 +159,7 @@ export default function InteractiveHero({ heroImages }: InteractiveHeroProps) {
               key={i}
               onClick={() => handleDotClick(i)}
               className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                activeIndex === i ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/75'
+                activeIndex === i ? 'bg-black scale-125' : 'bg-black/50 hover:bg-black/75'
               }`}
               aria-label={`Go to slide ${i + 1}`}
             />
