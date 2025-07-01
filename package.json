@@ -11,10 +11,12 @@
   },
   "dependencies": {
     "dompurify": "^3.2.6",
+    "leaflet": "^1.9.4",
     "lucide-react": "^0.523.0",
     "next": "15.3.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-leaflet": "^5.0.0",
     "three": "^0.177.0"
   },
   "devDependencies": {
@@ -25,6 +27,7 @@
     "@testing-library/user-event": "^14.6.1",
     "@types/dompurify": "^3.0.5",
     "@types/jest": "^30.0.0",
+    "@types/leaflet": "^1.9.19",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
