@@ -54,9 +54,9 @@ export default function Footer() {
   return (
     <section 
       className="relative bg-cover bg-center py-16 sm:py-20" 
-      style={{ backgroundImage: "url('/footer-bg.jpg')" }}
+      // style={{ backgroundImage: "url('/footer-bg.jpg')" }}
     >
-      <div className="absolute inset-0 bg-black opacity-50"></div>
+      <div className="absolute inset-0 bg-black opacity-100"></div>
 
       <div className="relative container mx-auto px-4 z-10">
         <div className="bg-white rounded-xl shadow-2xl p-8 md:p-12 max-w-4xl mx-auto">
